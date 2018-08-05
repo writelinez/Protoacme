@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using Protoacme.Core.Abstractions;
 using Protoacme.Core.Enumerations;
 using Protoacme.Core.InternalModels;
 using Protoacme.Core.Utilities;
@@ -19,7 +20,7 @@ namespace Protoacme.Core
     /// <summary>
     /// Low level Api used to interact with the ACME server.
     /// </summary>
-    public class AcmeRestApi
+    public class AcmeRestApi : IAcmeRestApi
     {
         private readonly HttpClient _httpClient = null;
         private readonly string _letsEncryptEndpoint = string.Empty;
