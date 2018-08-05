@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using Protoacme.Core.InternalModels;
 using Protoacme.Core.Utilities;
 using System;
 using System.Collections.Generic;
@@ -34,9 +35,9 @@ namespace Protoacme.Core
             :this(rsaParameters, nonce, directory, string.Empty, payload)
         { }
 
-        public string SerializeSignedToken()
+        public object SerializeSignedObject()
         {
-            string token = string.Empty;
+            object token = null;
 
             if (Payload == null)
                 throw new ArgumentException("Payload must be set before the token can be created and signed.");
@@ -79,38 +80,19 @@ namespace Protoacme.Core
             byte[] signedBytes = _cryptoProvider.SignData(sigBytes, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1);
             string signature = Base64Tool.Encode(signedBytes);
 
-            token = JsonConvert.SerializeObject(new
+            token = new
             {
                 @protected = encodedProtected,
                 payload = encodedPayload,
                 signature = signature
-            });
+            };
 
             return token;
         }
 
-        private class JWK
+        public string SerializeSignedToken()
         {
-            public string e { get; set; }
-
-            public string kty { get; set; }
-
-            public string n { get; set; }
-        }
-
-        private class PROTECTED
-        {
-            public string alg { get; set; }
-
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public JWK jwk { get; set; }
-
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public string kid { get; set; }
-
-            public string nonce { get; set; }
-
-            public string url { get; set; }
+            return JsonConvert.SerializeObject(SerializeSignedObject());
         }
     }
 }
