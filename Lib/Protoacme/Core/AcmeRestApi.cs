@@ -6,13 +6,11 @@ using Protoacme.Core.Utilities;
 using Protoacme.Models;
 using System;
 using System.Collections.Generic;
-using System.Dynamic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Security.Cryptography;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Protoacme.Core
@@ -57,7 +55,7 @@ namespace Protoacme.Core
         /// </summary>
         /// <param name="directory">Directory object.</param>
         /// <returns>Nonce string. Wrapped by a response object.</returns>
-        public async Task<AcmeApiResponse> GetNonce(AcmeDirectory directory)
+        public async Task<AcmeApiResponse> GetNonceAsync(AcmeDirectory directory)
         {
             if (directory == null)
                 throw new ArgumentNullException("directory");
@@ -87,7 +85,7 @@ namespace Protoacme.Core
         /// <param name="account">Information for new account.</param>
         /// <returns>Returns a serializable account object. Wrapped by a response object.</returns>
         /// <remarks>It is best to serialize and save the account object so it can be retrieved later and used for renewing domains.</remarks>
-        public async Task<AcmeApiResponse<AcmeAccount>> CreateAccount(AcmeDirectory directory, string nonce, AcmeCreateAccount account)
+        public async Task<AcmeApiResponse<AcmeAccount>> CreateAccountAsync(AcmeDirectory directory, string nonce, AcmeCreateAccount account)
         {
             if (directory == null)
                 throw new ArgumentNullException("directory");
@@ -142,7 +140,7 @@ namespace Protoacme.Core
         /// <param name="nonce">Nonce</param>
         /// <param name="account">Must be existing account.</param>
         /// <returns>Return api response with status.</returns>
-        public async Task<AcmeApiResponse> UpdateAccount(AcmeDirectory directory, string nonce, AcmeAccount account)
+        public async Task<AcmeApiResponse> UpdateAccountAsync(AcmeDirectory directory, string nonce, AcmeAccount account)
         {
             if (directory == null)
                 throw new ArgumentNullException("directory");
@@ -185,7 +183,7 @@ namespace Protoacme.Core
         /// <param name="account">Must be existing account.</param>
         /// <returns>Return api response with status.</returns>
         /// <remarks>Will update the security info on the passed in account, so you will need to reserialize and update your existing account object to update the security info.</remarks>
-        public async Task<AcmeApiResponse> RollOverAccountKey(AcmeDirectory directory, string nonce, AcmeAccount account)
+        public async Task<AcmeApiResponse> RollOverAccountKeyAsync(AcmeDirectory directory, string nonce, AcmeAccount account)
         {
             if (directory == null)
                 throw new ArgumentNullException("directory");
@@ -248,7 +246,7 @@ namespace Protoacme.Core
         /// <param name="account">Must be existing account.</param>
         /// <returns>Return api response with status.</returns>
         /// <remarks>After this account has been deactivated it will no longer be valid in future requests.</remarks>
-        public async Task<AcmeApiResponse> DeactivateAccount(AcmeDirectory directory, string nonce, AcmeAccount account)
+        public async Task<AcmeApiResponse> DeactivateAccountAsync(AcmeDirectory directory, string nonce, AcmeAccount account)
         {
             if (directory == null)
                 throw new ArgumentNullException("directory");
@@ -289,7 +287,7 @@ namespace Protoacme.Core
         /// <param name="account">Must be existing account.</param>
         /// <param name="certificates">Info describing the dns entries you are requesting certificates for.</param>
         /// <returns>A certificate fulfillment promise that is used to complete the certification chain in future requests.  Wrapped by a response object.</returns>
-        public async Task<AcmeApiResponse<AcmeCertificateFulfillmentPromise>> RequestCertificate(AcmeDirectory directory, string nonce, AcmeAccount account, AcmeCertificateRequest certificates)
+        public async Task<AcmeApiResponse<AcmeCertificateFulfillmentPromise>> RequestCertificateAsync(AcmeDirectory directory, string nonce, AcmeAccount account, AcmeCertificateRequest certificates)
         {
             if (directory == null)
                 throw new ArgumentNullException("directory");
@@ -332,7 +330,7 @@ namespace Protoacme.Core
         /// </summary>
         /// <param name="acmeCertificateFulfillmentPromise">The certificate fulfillment promise retrieved from the RequestCertificate call.</param>
         /// <returns>An authorization object containing the available challenge types. Wrapped by a response object.</returns>
-        public async Task<List<AcmeApiResponse<AcmeAuthorization>>> GetChallenges(AcmeCertificateFulfillmentPromise acmeCertificateFulfillmentPromise)
+        public async Task<List<AcmeApiResponse<AcmeAuthorization>>> GetChallengesAsync(AcmeCertificateFulfillmentPromise acmeCertificateFulfillmentPromise)
         {
             List<AcmeApiResponse<AcmeAuthorization>> response = new List<AcmeApiResponse<AcmeAuthorization>>();
 
@@ -372,7 +370,7 @@ namespace Protoacme.Core
         /// <param name="keyAuthorization">Authorization that identifies the domain and user.</param>
         /// <returns>The status of the challenge authorization. Wrapped by a response object.</returns>
         /// <remarks>This will need to be called on each domain that is used in the RequestCertificate call. You should not call this until the challenges are ready to verify. See https://tools.ietf.org/html/draft-ietf-acme-acme-12#section-7.5 for more information.</remarks>
-        public async Task<AcmeApiResponse<AcmeChallengeStatus>> VerifyChallenge(AcmeAccount account, AcmeChallenge challenge, string nonce, string keyAuthorization)
+        public async Task<AcmeApiResponse<AcmeChallengeStatus>> VerifyChallengeAsync(AcmeAccount account, AcmeChallenge challenge, string nonce, string keyAuthorization)
         {
             if (string.IsNullOrEmpty(nonce))
                 throw new ArgumentNullException("nonce");
@@ -411,7 +409,7 @@ namespace Protoacme.Core
         /// </summary>
         /// <param name="challenge">Single challenge from the AcmeAuthorization</param>
         /// <returns>Returns the status of the challenge. Wrapped by a response object.</returns>
-        public async Task<AcmeApiResponse<AcmeChallengeVerificationStatus>> GetChallengeVerificationStatus(AcmeChallenge challenge)
+        public async Task<AcmeApiResponse<AcmeChallengeVerificationStatus>> GetChallengeVerificationStatusAsync(AcmeChallenge challenge)
         {
             if (challenge == null)
                 throw new ArgumentNullException("challenge");
@@ -437,7 +435,7 @@ namespace Protoacme.Core
         /// <param name="acmeCertificateFulfillmentPromise">The original Certificate Fulfillment Promise used in the RequestCertificate request.</param>
         /// <param name="csr">The certificate CSR. This can be generated using helpers through this api or by an external source such as IIS.</param>
         /// <returns>A completed Certificate Fulfillment Promise used to Download the certificate using the GetCertificate call. Wrapped by a response object.</returns>
-        public async Task<AcmeApiResponse<AcmeCertificateFulfillmentPromise>> FinalizeChallenge(AcmeAccount account, string nonce, AcmeCertificateFulfillmentPromise acmeCertificateFulfillmentPromise, string csr)
+        public async Task<AcmeApiResponse<AcmeCertificateFulfillmentPromise>> FinalizeChallengeAsync(AcmeAccount account, string nonce, AcmeCertificateFulfillmentPromise acmeCertificateFulfillmentPromise, string csr)
         {
             if (string.IsNullOrEmpty(nonce))
                 throw new ArgumentNullException("nonce");
@@ -477,7 +475,7 @@ namespace Protoacme.Core
         /// <param name="completedPromise">The completed certificate fulfillment promise retreived from the FinalizeChallenge call.</param>
         /// <param name="certificateType">The type of certificate you are requesting.</param>
         /// <returns>The certificate.</returns>
-        public async Task<AcmeApiResponse<ArraySegment<byte>>> GetCertificate(AcmeCertificateFulfillmentPromise completedPromise, CertificateType certificateType)
+        public async Task<AcmeApiResponse<ArraySegment<byte>>> GetCertificateAsync(AcmeCertificateFulfillmentPromise completedPromise, CertificateType certificateType)
         {
             if (completedPromise == null)
                 throw new ArgumentNullException("completedPromise");

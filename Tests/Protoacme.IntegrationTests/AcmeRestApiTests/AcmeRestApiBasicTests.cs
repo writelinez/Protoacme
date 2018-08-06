@@ -48,7 +48,7 @@ namespace Protoacme.IntegrationTests.AcmeRestApiTests
 
             //EXECUTE
             directoryResponse = await api.GetDirectoryAsync();
-            nonceResponse = await api.GetNonce(directoryResponse.Data);
+            nonceResponse = await api.GetNonceAsync(directoryResponse.Data);
 
             //ASSERT
             nonceResponse.ShouldNotBeNull();
@@ -67,8 +67,8 @@ namespace Protoacme.IntegrationTests.AcmeRestApiTests
 
             //EXECUTE
             directory = await api.GetDirectoryAsync();
-            nonceResponse = await api.GetNonce(directory.Data);
-            accountResponse = await api.CreateAccount(directory.Data, nonceResponse.Nonce, new AcmeCreateAccount() { Contact = new List<string>() { "mailto:bob@toast.com" }, TermsOfServiceAgreed = true });
+            nonceResponse = await api.GetNonceAsync(directory.Data);
+            accountResponse = await api.CreateAccountAsync(directory.Data, nonceResponse.Nonce, new AcmeCreateAccount() { Contact = new List<string>() { "mailto:bob@toast.com" }, TermsOfServiceAgreed = true });
 
             //ASSERT
             accountResponse.ShouldNotBeNull();
@@ -92,9 +92,9 @@ namespace Protoacme.IntegrationTests.AcmeRestApiTests
 
             //EXECUTE
             directory = await api.GetDirectoryAsync();
-            nonceResponse = await api.GetNonce(directory.Data);
-            accountResponse = await api.CreateAccount(directory.Data, nonceResponse.Nonce, new AcmeCreateAccount() { Contact = new List<string>() { "mailto:bob@toast.com" }, TermsOfServiceAgreed = true });
-            updateAccountResponse = await api.UpdateAccount(directory.Data, accountResponse.Nonce, accountResponse.Data);
+            nonceResponse = await api.GetNonceAsync(directory.Data);
+            accountResponse = await api.CreateAccountAsync(directory.Data, nonceResponse.Nonce, new AcmeCreateAccount() { Contact = new List<string>() { "mailto:bob@toast.com" }, TermsOfServiceAgreed = true });
+            updateAccountResponse = await api.UpdateAccountAsync(directory.Data, accountResponse.Nonce, accountResponse.Data);
 
             //ASSERT
             updateAccountResponse.ShouldNotBeNull();
@@ -114,9 +114,9 @@ namespace Protoacme.IntegrationTests.AcmeRestApiTests
 
             //EXECUTE
             directory = await api.GetDirectoryAsync();
-            nonceResponse = await api.GetNonce(directory.Data);
-            accountResponse = await api.CreateAccount(directory.Data, nonceResponse.Nonce, new AcmeCreateAccount() { Contact = new List<string>() { "mailto:bob@toast.com" }, TermsOfServiceAgreed = true });
-            rollOverAccountKeyResponse = await api.RollOverAccountKey(directory.Data, accountResponse.Nonce, accountResponse.Data);
+            nonceResponse = await api.GetNonceAsync(directory.Data);
+            accountResponse = await api.CreateAccountAsync(directory.Data, nonceResponse.Nonce, new AcmeCreateAccount() { Contact = new List<string>() { "mailto:bob@toast.com" }, TermsOfServiceAgreed = true });
+            rollOverAccountKeyResponse = await api.RollOverAccountKeyAsync(directory.Data, accountResponse.Nonce, accountResponse.Data);
 
             //ASSERT
             rollOverAccountKeyResponse.ShouldNotBeNull();
@@ -136,9 +136,9 @@ namespace Protoacme.IntegrationTests.AcmeRestApiTests
 
             //EXECUTE
             directory = await api.GetDirectoryAsync();
-            nonceResponse = await api.GetNonce(directory.Data);
-            accountResponse = await api.CreateAccount(directory.Data, nonceResponse.Nonce, new AcmeCreateAccount() { Contact = new List<string>() { "mailto:bob@toast.com" }, TermsOfServiceAgreed = true });
-            deactivateAccountResponse = await api.DeactivateAccount(directory.Data, accountResponse.Nonce, accountResponse.Data);
+            nonceResponse = await api.GetNonceAsync(directory.Data);
+            accountResponse = await api.CreateAccountAsync(directory.Data, nonceResponse.Nonce, new AcmeCreateAccount() { Contact = new List<string>() { "mailto:bob@toast.com" }, TermsOfServiceAgreed = true });
+            deactivateAccountResponse = await api.DeactivateAccountAsync(directory.Data, accountResponse.Nonce, accountResponse.Data);
 
             //ASSERT
             deactivateAccountResponse.ShouldNotBeNull();
@@ -173,9 +173,9 @@ namespace Protoacme.IntegrationTests.AcmeRestApiTests
 
             //EXECUTE
             directory = await api.GetDirectoryAsync();
-            nonceResponse = await api.GetNonce(directory.Data);
-            accountResponse = await api.CreateAccount(directory.Data, nonceResponse.Nonce, new AcmeCreateAccount() { Contact = new List<string>() { "mailto:bob@toast.com" }, TermsOfServiceAgreed = true });
-            certificateFulfillmentPromise = await api.RequestCertificate(directory.Data, accountResponse.Nonce, accountResponse.Data, certifcateRequest);
+            nonceResponse = await api.GetNonceAsync(directory.Data);
+            accountResponse = await api.CreateAccountAsync(directory.Data, nonceResponse.Nonce, new AcmeCreateAccount() { Contact = new List<string>() { "mailto:bob@toast.com" }, TermsOfServiceAgreed = true });
+            certificateFulfillmentPromise = await api.RequestCertificateAsync(directory.Data, accountResponse.Nonce, accountResponse.Data, certifcateRequest);
 
             //ASSERT
             certificateFulfillmentPromise.ShouldNotBeNull();
@@ -218,10 +218,10 @@ namespace Protoacme.IntegrationTests.AcmeRestApiTests
 
             //EXECUTE
             directory = await api.GetDirectoryAsync();
-            nonceResponse = await api.GetNonce(directory.Data);
-            accountResponse = await api.CreateAccount(directory.Data, nonceResponse.Nonce, new AcmeCreateAccount() { Contact = new List<string>() { "mailto:bob@toast.com" }, TermsOfServiceAgreed = true });
-            certificateFulfillmentPromise = await api.RequestCertificate(directory.Data, accountResponse.Nonce, accountResponse.Data, certifcateRequest);
-            authorizations = await api.GetChallenges(certificateFulfillmentPromise.Data);
+            nonceResponse = await api.GetNonceAsync(directory.Data);
+            accountResponse = await api.CreateAccountAsync(directory.Data, nonceResponse.Nonce, new AcmeCreateAccount() { Contact = new List<string>() { "mailto:bob@toast.com" }, TermsOfServiceAgreed = true });
+            certificateFulfillmentPromise = await api.RequestCertificateAsync(directory.Data, accountResponse.Nonce, accountResponse.Data, certifcateRequest);
+            authorizations = await api.GetChallengesAsync(certificateFulfillmentPromise.Data);
 
             //ASSERT
             authorizations.ShouldNotBeNull();
@@ -258,15 +258,15 @@ namespace Protoacme.IntegrationTests.AcmeRestApiTests
 
             //EXECUTE
             directory = await api.GetDirectoryAsync();
-            nonceResponse = await api.GetNonce(directory.Data);
-            accountResponse = await api.CreateAccount(directory.Data, nonceResponse.Nonce, new AcmeCreateAccount() { Contact = new List<string>() { "mailto:bob@toast.com" }, TermsOfServiceAgreed = true });
-            certificateFulfillmentPromise = await api.RequestCertificate(directory.Data, accountResponse.Nonce, accountResponse.Data, certifcateRequest);
-            authorizations = await api.GetChallenges(certificateFulfillmentPromise.Data);
+            nonceResponse = await api.GetNonceAsync(directory.Data);
+            accountResponse = await api.CreateAccountAsync(directory.Data, nonceResponse.Nonce, new AcmeCreateAccount() { Contact = new List<string>() { "mailto:bob@toast.com" }, TermsOfServiceAgreed = true });
+            certificateFulfillmentPromise = await api.RequestCertificateAsync(directory.Data, accountResponse.Nonce, accountResponse.Data, certifcateRequest);
+            authorizations = await api.GetChallengesAsync(certificateFulfillmentPromise.Data);
 
             AcmeChallenge httpChallenge = authorizations.First().Data.Challenges.First(t => t.Type.Equals("http-01"));
             string authKey = CreateAuthorizationKey(accountResponse.Data, httpChallenge.Token);
 
-            challengeStatusResponse = await api.VerifyChallenge(accountResponse.Data, httpChallenge, certificateFulfillmentPromise.Nonce, authKey);
+            challengeStatusResponse = await api.VerifyChallengeAsync(accountResponse.Data, httpChallenge, certificateFulfillmentPromise.Nonce, authKey);
 
             //ASSERT
             challengeStatusResponse.ShouldNotBeNull();
@@ -301,16 +301,16 @@ namespace Protoacme.IntegrationTests.AcmeRestApiTests
 
             //EXECUTE
             directory = await api.GetDirectoryAsync();
-            nonceResponse = await api.GetNonce(directory.Data);
-            accountResponse = await api.CreateAccount(directory.Data, nonceResponse.Nonce, new AcmeCreateAccount() { Contact = new List<string>() { "mailto:bob@toast.com" }, TermsOfServiceAgreed = true });
-            certificateFulfillmentPromise = await api.RequestCertificate(directory.Data, accountResponse.Nonce, accountResponse.Data, certifcateRequest);
-            authorizations = await api.GetChallenges(certificateFulfillmentPromise.Data);
+            nonceResponse = await api.GetNonceAsync(directory.Data);
+            accountResponse = await api.CreateAccountAsync(directory.Data, nonceResponse.Nonce, new AcmeCreateAccount() { Contact = new List<string>() { "mailto:bob@toast.com" }, TermsOfServiceAgreed = true });
+            certificateFulfillmentPromise = await api.RequestCertificateAsync(directory.Data, accountResponse.Nonce, accountResponse.Data, certifcateRequest);
+            authorizations = await api.GetChallengesAsync(certificateFulfillmentPromise.Data);
 
             AcmeChallenge httpChallenge = authorizations.First().Data.Challenges.First(t => t.Type.Equals("http-01"));
             string authKey = CreateAuthorizationKey(accountResponse.Data, httpChallenge.Token);
 
-            challengeStatusResponse = await api.VerifyChallenge(accountResponse.Data, httpChallenge, certificateFulfillmentPromise.Nonce, authKey);
-            challengeVerificationResponse = await api.GetChallengeVerificationStatus(httpChallenge);
+            challengeStatusResponse = await api.VerifyChallengeAsync(accountResponse.Data, httpChallenge, certificateFulfillmentPromise.Nonce, authKey);
+            challengeVerificationResponse = await api.GetChallengeVerificationStatusAsync(httpChallenge);
 
             //ASSERT
             challengeVerificationResponse.ShouldNotBeNull();
@@ -344,26 +344,26 @@ namespace Protoacme.IntegrationTests.AcmeRestApiTests
 
             //EXECUTE
             directory = await api.GetDirectoryAsync();
-            nonceResponse = await api.GetNonce(directory.Data);
-            accountResponse = await api.CreateAccount(directory.Data, nonceResponse.Nonce, new AcmeCreateAccount() { Contact = new List<string>() { "mailto:bob@toast.com" }, TermsOfServiceAgreed = true });
-            certificateFulfillmentPromise = await api.RequestCertificate(directory.Data, accountResponse.Nonce, accountResponse.Data, certifcateRequest);
-            authorizations = await api.GetChallenges(certificateFulfillmentPromise.Data);
+            nonceResponse = await api.GetNonceAsync(directory.Data);
+            accountResponse = await api.CreateAccountAsync(directory.Data, nonceResponse.Nonce, new AcmeCreateAccount() { Contact = new List<string>() { "mailto:bob@toast.com" }, TermsOfServiceAgreed = true });
+            certificateFulfillmentPromise = await api.RequestCertificateAsync(directory.Data, accountResponse.Nonce, accountResponse.Data, certifcateRequest);
+            authorizations = await api.GetChallengesAsync(certificateFulfillmentPromise.Data);
 
             AcmeChallenge httpChallenge = authorizations.First().Data.Challenges.First(t => t.Type.Equals("http-01"));
             string authKey = CreateAuthorizationKey(accountResponse.Data, httpChallenge.Token);
 
-            challengeStatusResponse = await api.VerifyChallenge(accountResponse.Data, httpChallenge, certificateFulfillmentPromise.Nonce, authKey);
+            challengeStatusResponse = await api.VerifyChallengeAsync(accountResponse.Data, httpChallenge, certificateFulfillmentPromise.Nonce, authKey);
             while (
                 challengeVerificationResponse == null || 
                 challengeVerificationResponse.Data.Status == "pending")
             {
-                challengeVerificationResponse = await api.GetChallengeVerificationStatus(httpChallenge);
+                challengeVerificationResponse = await api.GetChallengeVerificationStatusAsync(httpChallenge);
                 await Task.Delay(3000);
             }
 
             string csr = GenerateCSR(accountResponse.Data, "vapedish.com");
 
-            certificatePromiseResult = await api.FinalizeChallenge(accountResponse.Data, challengeStatusResponse.Nonce, certificateFulfillmentPromise.Data, csr);
+            certificatePromiseResult = await api.FinalizeChallengeAsync(accountResponse.Data, challengeStatusResponse.Nonce, certificateFulfillmentPromise.Data, csr);
 
             //ASSERT (Cant really assert anything here. This call will mostlikey fail. There is no way to validate the domain here)
             certificatePromiseResult.ShouldNotBeNull();
@@ -397,27 +397,27 @@ namespace Protoacme.IntegrationTests.AcmeRestApiTests
 
             //EXECUTE
             directory = await api.GetDirectoryAsync();
-            nonceResponse = await api.GetNonce(directory.Data);
-            accountResponse = await api.CreateAccount(directory.Data, nonceResponse.Nonce, new AcmeCreateAccount() { Contact = new List<string>() { "mailto:bob@toast.com" }, TermsOfServiceAgreed = true });
-            certificateFulfillmentPromise = await api.RequestCertificate(directory.Data, accountResponse.Nonce, accountResponse.Data, certifcateRequest);
-            authorizations = await api.GetChallenges(certificateFulfillmentPromise.Data);
+            nonceResponse = await api.GetNonceAsync(directory.Data);
+            accountResponse = await api.CreateAccountAsync(directory.Data, nonceResponse.Nonce, new AcmeCreateAccount() { Contact = new List<string>() { "mailto:bob@toast.com" }, TermsOfServiceAgreed = true });
+            certificateFulfillmentPromise = await api.RequestCertificateAsync(directory.Data, accountResponse.Nonce, accountResponse.Data, certifcateRequest);
+            authorizations = await api.GetChallengesAsync(certificateFulfillmentPromise.Data);
 
             AcmeChallenge httpChallenge = authorizations.First().Data.Challenges.First(t => t.Type.Equals("http-01"));
             string authKey = CreateAuthorizationKey(accountResponse.Data, httpChallenge.Token);
 
-            challengeStatusResponse = await api.VerifyChallenge(accountResponse.Data, httpChallenge, certificateFulfillmentPromise.Nonce, authKey);
+            challengeStatusResponse = await api.VerifyChallengeAsync(accountResponse.Data, httpChallenge, certificateFulfillmentPromise.Nonce, authKey);
             while (
                 challengeVerificationResponse == null ||
                 challengeVerificationResponse.Data.Status == "pending")
             {
-                challengeVerificationResponse = await api.GetChallengeVerificationStatus(httpChallenge);
+                challengeVerificationResponse = await api.GetChallengeVerificationStatusAsync(httpChallenge);
                 await Task.Delay(3000);
             }
 
             string csr = GenerateCSR(accountResponse.Data, "vapedish.com");
 
-            certificatePromiseResult = await api.FinalizeChallenge(accountResponse.Data, challengeStatusResponse.Nonce, certificateFulfillmentPromise.Data, csr);
-            certificateResult = await api.GetCertificate(certificatePromiseResult.Data, CertificateType.Cert);
+            certificatePromiseResult = await api.FinalizeChallengeAsync(accountResponse.Data, challengeStatusResponse.Nonce, certificateFulfillmentPromise.Data, csr);
+            certificateResult = await api.GetCertificateAsync(certificatePromiseResult.Data, CertificateType.Cert);
 
             //We will write the cert out to a temp directory if it exists. Otherwise, forget it.
             if (Directory.Exists(@"c:\temp"))
