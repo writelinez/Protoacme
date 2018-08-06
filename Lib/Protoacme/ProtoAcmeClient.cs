@@ -4,6 +4,7 @@ using Protoacme.Core.Enumerations;
 using Protoacme.Core.Exceptions;
 using Protoacme.Core.InternalRepositories;
 using Protoacme.Models;
+using Protoacme.Services;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -17,12 +18,18 @@ namespace Protoacme
         private readonly ICachedRepository<AcmeDirectory> _directoryCache;
         private readonly ICachedRepository<string> _nonceCache;
 
+        private readonly AcmeAccountService _accountService = null;
+
+        public AcmeAccountService Account { get { return _accountService; } }
+
         public ProtoAcmeClient(IAcmeRestApi acmeApi)
         {
             _acmeApi = acmeApi;
 
             _directoryCache = new CachedRepository<AcmeDirectory>(GetDirectory);
             _nonceCache = new CachedRepository<string>(GetNewNonce);
+
+            _accountService = new AcmeAccountService(_acmeApi, _directoryCache, _nonceCache);
         }
 
         public ProtoAcmeClient(string letsEncryptEndpoint)
@@ -32,21 +39,6 @@ namespace Protoacme
         public ProtoAcmeClient()
             :this(new AcmeRestApi(ProtoacmeContants.LETSENCRYPT_PROD_ENDPOINT))
         { }
-
-        public async Task<AcmeAccount> CreateAccountAsync(AcmeCreateAccount accountDetails)
-        {
-            var directory = await _directoryCache.GetAsync();
-            var nonce = await _nonceCache.GetAsync();
-
-            var accountResponse = await _acmeApi.CreateAccountAsync(directory, nonce, accountDetails);
-            if (accountResponse.Status == AcmeApiResponseStatus.Error)
-                throw new AcmeProtocolException(accountResponse.Message);
-
-            _nonceCache.Update(accountResponse.Nonce);
-
-            return accountResponse.Data;
-        }
-
         
 
         #region Private Functions

@@ -36,7 +36,7 @@ namespace Protoacme.UnitTests.ProtoAcmeClientTests
                 .ReturnsAsync(accountResponse);
 
             //EXECUTE
-            var expectedAccountResponse = await client.CreateAccountAsync(new AcmeCreateAccount() { Contact = new List<string>() { "a" }, TermsOfServiceAgreed = true });
+            var expectedAccountResponse = await client.Account.CreateAsync(new AcmeCreateAccount() { Contact = new List<string>() { "a" }, TermsOfServiceAgreed = true });
 
             //ASSERT
             restApiMock.Verify(method => method.GetDirectoryAsync(), Times.Once());

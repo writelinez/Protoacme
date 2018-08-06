@@ -1,8 +1,8 @@
 ﻿using System.Threading.Tasks;
 
-namespace Protoacme.Core.InternalRepositories
+namespace Protoacme.Core.Abstractions
 {
-    internal interface ICachedRepository<TModel>
+    public interface ICachedRepository<TModel>
     {
         Task<TModel> GetAsync();
         void Update(TModel model);
