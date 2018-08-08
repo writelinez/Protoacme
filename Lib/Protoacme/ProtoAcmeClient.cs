@@ -12,17 +12,21 @@ using System.Threading.Tasks;
 
 namespace Protoacme
 {
-    public class ProtoAcmeClient
+    public class ProtoacmeClient
     {
         private readonly IAcmeRestApi _acmeApi;
         private readonly ICachedRepository<AcmeDirectory> _directoryCache;
         private readonly ICachedRepository<string> _nonceCache;
 
         private readonly AcmeAccountService _accountService = null;
+        private readonly AcmeCertificateService _certificateService = null;
+        private readonly AcmeChallengeService _challengeService = null;
 
         public AcmeAccountService Account { get { return _accountService; } }
+        public AcmeCertificateService Certificate { get { return _certificateService; } }
+        public AcmeChallengeService Challenge { get { return _challengeService; } }
 
-        public ProtoAcmeClient(IAcmeRestApi acmeApi)
+        public ProtoacmeClient(IAcmeRestApi acmeApi)
         {
             _acmeApi = acmeApi;
 
@@ -30,13 +34,15 @@ namespace Protoacme
             _nonceCache = new CachedRepository<string>(GetNewNonce);
 
             _accountService = new AcmeAccountService(_acmeApi, _directoryCache, _nonceCache);
+            _certificateService = new AcmeCertificateService(_acmeApi, _directoryCache, _nonceCache);
+            _challengeService = new AcmeChallengeService(_acmeApi, _directoryCache, _nonceCache);
         }
 
-        public ProtoAcmeClient(string letsEncryptEndpoint)
+        public ProtoacmeClient(string letsEncryptEndpoint)
             : this(new AcmeRestApi(letsEncryptEndpoint))
         { }
 
-        public ProtoAcmeClient()
+        public ProtoacmeClient()
             :this(new AcmeRestApi(ProtoacmeContants.LETSENCRYPT_PROD_ENDPOINT))
         { }
         

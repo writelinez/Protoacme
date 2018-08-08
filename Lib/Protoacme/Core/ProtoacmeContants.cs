@@ -14,5 +14,9 @@ namespace Protoacme.Core
 
         public const string HEADER_NONCE = "Replay-Nonce";
         public const string HEADER_LOCATION = "Location";
+
+        public const string CHALLENGE_HTTP = "http-01";
+        public const string CHALLENGE_DNS = "dns-01";
+        public const string CHALLENGE_TLS = "tls-alpn-01";
     }
 }
