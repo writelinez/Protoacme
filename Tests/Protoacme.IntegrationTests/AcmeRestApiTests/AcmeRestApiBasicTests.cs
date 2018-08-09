@@ -363,7 +363,7 @@ namespace Protoacme.IntegrationTests.AcmeRestApiTests
 
             string csr = GenerateCSR(accountResponse.Data, "vapedish.com");
 
-            certificatePromiseResult = await api.FinalizeChallengeAsync(accountResponse.Data, challengeStatusResponse.Nonce, certificateFulfillmentPromise.Data, csr);
+            certificatePromiseResult = await api.FinalizeCertificatePromiseAsync(accountResponse.Data, challengeStatusResponse.Nonce, certificateFulfillmentPromise.Data, csr);
 
             //ASSERT (Cant really assert anything here. This call will mostlikey fail. There is no way to validate the domain here)
             certificatePromiseResult.ShouldNotBeNull();
@@ -416,7 +416,7 @@ namespace Protoacme.IntegrationTests.AcmeRestApiTests
 
             string csr = GenerateCSR(accountResponse.Data, "vapedish.com");
 
-            certificatePromiseResult = await api.FinalizeChallengeAsync(accountResponse.Data, challengeStatusResponse.Nonce, certificateFulfillmentPromise.Data, csr);
+            certificatePromiseResult = await api.FinalizeCertificatePromiseAsync(accountResponse.Data, challengeStatusResponse.Nonce, certificateFulfillmentPromise.Data, csr);
             certificateResult = await api.GetCertificateAsync(certificatePromiseResult.Data, CertificateType.Cert);
 
             //We will write the cert out to a temp directory if it exists. Otherwise, forget it.

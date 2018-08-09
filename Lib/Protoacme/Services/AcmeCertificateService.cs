@@ -1,6 +1,7 @@
 ﻿using Protoacme.Core.Abstractions;
 using Protoacme.Core.Enumerations;
 using Protoacme.Core.Exceptions;
+using Protoacme.Core.InternalModels;
 using Protoacme.Models;
 using System;
 using System.Collections.Generic;
@@ -36,19 +37,20 @@ namespace Protoacme.Services
             return response.Data;
         }
 
-        public async Task<ArraySegment<byte>> DownloadCertificate(AcmeCertificateFulfillmentPromise completedPromise, CertificateType certificateType)
-        {
-            if (string.IsNullOrEmpty(completedPromise.Certificate))
-                throw new AcmeProtocolException("Acme Certificate Fulfillment Promise has not been completed. You must complete a challenge before you can download your certificate.");
-
+        public async Task<ArraySegment<byte>> DownloadCertificateAsync(AcmeAccount account, AcmeCertificateFulfillmentPromise completedPromise, Protoacme.Utility.Certificates.CSR csr, CertificateType certificateType)
+        {            
             var directory = await _directoryCache.GetAsync();
             var nonce = await _nonceCache.GetAsync();
 
-            var response = await _acmeApi.GetCertificateAsync(completedPromise, certificateType);
+            var finalizeResponse = await _acmeApi.FinalizeCertificatePromiseAsync(account, nonce, completedPromise, csr.Base64UrlEncoded);
+            if (finalizeResponse.Status == AcmeApiResponseStatus.Error)
+                throw new AcmeProtocolException(finalizeResponse.Message);
+
+            var response = await _acmeApi.GetCertificateAsync(finalizeResponse.Data, certificateType);
             if (response.Status == AcmeApiResponseStatus.Error)
                 throw new AcmeProtocolException(response.Message);
 
-            _nonceCache.Update(response.Nonce);
+            _nonceCache.Update(finalizeResponse.Nonce);
 
             return response.Data;
         }

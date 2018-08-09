@@ -3,6 +3,7 @@ using Newtonsoft.Json;
 using Protoacme.Challenge;
 using Protoacme.Core;
 using Protoacme.Core.Abstractions;
+using Protoacme.Core.Enumerations;
 using Protoacme.Models;
 using Protoacme.Utility;
 using Protoacme.Utility.Certificates;
@@ -70,6 +71,7 @@ namespace Protoacme.IntegrationTests.ProtoAcmeTests
                 while (challengeStatus == null || challengeStatus.Status == "pending")
                 {
                     challengeStatus = await client.Challenge.GetChallengeVerificationStatus(dnsChallenge);
+                    await Task.Delay(3000);
                 }
 
                 if (challengeStatus.Status != "valid")
@@ -78,10 +80,16 @@ namespace Protoacme.IntegrationTests.ProtoAcmeTests
 
             //2. If everything is good we download the certificate
             CSR csr = CertificateUtility.GenerateCsr(dnsNames.ToArray());
-                //Normally you would save the csr to be used next time.
+            //Normally you would save the csr to be used next time.
 
-            //client.Certificate.DownloadCertificate()
+            var cert = await client.Certificate.DownloadCertificateAsync(account, promise, csr, CertificateType.Cert);
 
+            //Save Cert
+            using (FileStream fs = new FileStream(@"c:\temp\mycert.cer", FileMode.Create))
+            {
+                byte[] buffer = cert.Array;
+                fs.Write(buffer, 0, buffer.Length);
+            }
         }
 
         private void SaveAccountAndChallengeData(AcmeAccount account, IEnumerable<IAcmeChallengeContent> challenges, AcmeCertificateFulfillmentPromise promise)

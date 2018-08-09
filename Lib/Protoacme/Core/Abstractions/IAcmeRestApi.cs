@@ -10,7 +10,7 @@ namespace Protoacme.Core.Abstractions
     {
         Task<AcmeApiResponse<AcmeAccount>> CreateAccountAsync(AcmeDirectory directory, string nonce, AcmeCreateAccount account);
         Task<AcmeApiResponse> DeactivateAccountAsync(AcmeDirectory directory, string nonce, AcmeAccount account);
-        Task<AcmeApiResponse<AcmeCertificateFulfillmentPromise>> FinalizeChallengeAsync(AcmeAccount account, string nonce, AcmeCertificateFulfillmentPromise acmeCertificateFulfillmentPromise, string csr);
+        Task<AcmeApiResponse<AcmeCertificateFulfillmentPromise>> FinalizeCertificatePromiseAsync(AcmeAccount account, string nonce, AcmeCertificateFulfillmentPromise acmeCertificateFulfillmentPromise, string csr);
         Task<AcmeApiResponse<ArraySegment<byte>>> GetCertificateAsync(AcmeCertificateFulfillmentPromise completedPromise, CertificateType certificateType);
         Task<List<AcmeApiResponse<AcmeAuthorization>>> GetChallengesAsync(AcmeCertificateFulfillmentPromise acmeCertificateFulfillmentPromise);
         Task<AcmeApiResponse<AcmeChallengeVerificationStatus>> GetChallengeVerificationStatusAsync(AcmeChallenge challenge);

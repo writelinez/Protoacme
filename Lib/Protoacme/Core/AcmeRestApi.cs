@@ -435,7 +435,7 @@ namespace Protoacme.Core
         /// <param name="acmeCertificateFulfillmentPromise">The original Certificate Fulfillment Promise used in the RequestCertificate request.</param>
         /// <param name="csr">The certificate CSR. This can be generated using helpers through this api or by an external source such as IIS.</param>
         /// <returns>A completed Certificate Fulfillment Promise used to Download the certificate using the GetCertificate call. Wrapped by a response object.</returns>
-        public async Task<AcmeApiResponse<AcmeCertificateFulfillmentPromise>> FinalizeChallengeAsync(AcmeAccount account, string nonce, AcmeCertificateFulfillmentPromise acmeCertificateFulfillmentPromise, string csr)
+        public async Task<AcmeApiResponse<AcmeCertificateFulfillmentPromise>> FinalizeCertificatePromiseAsync(AcmeAccount account, string nonce, AcmeCertificateFulfillmentPromise acmeCertificateFulfillmentPromise, string csr)
         {
             if (string.IsNullOrEmpty(nonce))
                 throw new ArgumentNullException("nonce");
