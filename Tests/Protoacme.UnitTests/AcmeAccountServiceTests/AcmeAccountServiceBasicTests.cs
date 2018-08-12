@@ -123,7 +123,7 @@ namespace Protoacme.UnitTests.AcmeAccountServiceTests
             AcmeAccountService srv = new AcmeAccountService(acmeApiMock.Object, directoryCacheMock.Object, nonceCacheMock.Object);
 
             //ACT
-            await srv.Deactive(account);
+            await srv.DeactiveAsync(account);
 
             //ASSERT
             nonceCacheMock.Verify(method => method.Update(successResponse.Nonce), Times.Once());

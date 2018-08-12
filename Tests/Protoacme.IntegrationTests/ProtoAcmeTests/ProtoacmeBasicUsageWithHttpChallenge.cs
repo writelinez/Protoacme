@@ -20,8 +20,8 @@ namespace Protoacme.IntegrationTests.ProtoAcmeTests
     {
         private List<string> dnsNames = new List<string>()
         {
-            "vapedish.com",
-            "www.vapedish.com"
+            "test.com",
+            "www.test.com"
         };
 
         [TestMethod]
@@ -48,7 +48,7 @@ namespace Protoacme.IntegrationTests.ProtoAcmeTests
 
 
             //3. Get challenge
-            var challenges = await client.Challenge.GetChallenge(account, certPromise, ChallengeType.Http);
+            var challenges = await client.Challenge.GetChallengesAsync(account, certPromise, ChallengeType.Http);
 
             //4. Save Challenge and Account for next step.
             SaveAccountAndChallengeData(account, challenges, certPromise);
@@ -80,6 +80,7 @@ namespace Protoacme.IntegrationTests.ProtoAcmeTests
 
             //2. If everything is good we download the certificate
             CSR csr = CertificateUtility.GenerateCsr(dnsNames.ToArray());
+            SaveCRTPrivateKey(csr);
             //Normally you would save the csr to be used next time.
 
             var cert = await client.Certificate.DownloadCertificateAsync(account, promise, csr, CertificateType.Cert);
@@ -124,6 +125,12 @@ namespace Protoacme.IntegrationTests.ProtoAcmeTests
             {
                 challenge.SaveToFile(Path.Combine(baseFolder, challenge.Token));
             }
+
+            //Create Account Private Key
+            using (TextWriter writer = new StreamWriter(Path.Combine(baseFolder, "account.key")))
+            {
+                CertificateUtility.ExportRSAPrivateKey(account.SecurityInfo, writer);
+            }
         }
 
         private void LoadAccountAndChallengeData<TChallengeType>(out AcmeAccount account, out List<TChallengeType> challenges, out AcmeCertificateFulfillmentPromise promise)
@@ -162,6 +169,14 @@ namespace Protoacme.IntegrationTests.ProtoAcmeTests
                     sPromise = Encoding.UTF8.GetString(bPromise);
                     promise = JsonConvert.DeserializeObject<AcmeCertificateFulfillmentPromise>(sPromise);
                 }
+            }
+        }
+
+        private void SaveCRTPrivateKey(CSR csr)
+        {
+            using (TextWriter writer = new StreamWriter(@"c:\temp\crt.key"))
+            {
+                CertificateUtility.ExportRSAPrivateKey(csr.RSAParameters, writer);
             }
         }
     }

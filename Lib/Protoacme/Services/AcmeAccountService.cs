@@ -23,6 +23,11 @@ namespace Protoacme.Services
             _nonceCache = nonceCache;
         }
 
+        /// <summary>
+        /// Create a new account.
+        /// </summary>
+        /// <param name="accountDetails">Information for new account.</param>
+        /// <returns>Returns a serializable account object.</returns>
         public async Task<AcmeAccount> CreateAsync(AcmeCreateAccount accountDetails)
         {
             var directory = await _directoryCache.GetAsync();
@@ -37,6 +42,11 @@ namespace Protoacme.Services
             return response.Data;
         }
 
+        /// <summary>
+        /// Updates an existing accounts contacts
+        /// </summary>
+        /// <param name="account">Existing account</param>
+        /// <returns></returns>
         public async Task UpdateAsync(AcmeAccount account)
         {
             var directory = await _directoryCache.GetAsync();
@@ -49,6 +59,12 @@ namespace Protoacme.Services
             _nonceCache.Update(response.Nonce);
         }
 
+        /// <summary>
+        /// Changes and updates the account security info for an existing account.
+        /// </summary>
+        /// <param name="account">Existing account</param>
+        /// <returns></returns>
+        /// <remarks>Will update the security info on the passed in account, so you will need to reserialize and update your existing account object to update the security info.</remarks>
         public async Task ChangeKeyAsync(AcmeAccount account)
         {
             var directory = await _directoryCache.GetAsync();
@@ -61,7 +77,12 @@ namespace Protoacme.Services
             _nonceCache.Update(response.Nonce);
         }
 
-        public async Task Deactive(AcmeAccount account)
+        /// <summary>
+        /// Deactivates an existing account
+        /// </summary>
+        /// <param name="account">Existing account</param>
+        /// <returns></returns>
+        public async Task DeactiveAsync(AcmeAccount account)
         {
             var directory = await _directoryCache.GetAsync();
             var nonce = await _nonceCache.GetAsync();

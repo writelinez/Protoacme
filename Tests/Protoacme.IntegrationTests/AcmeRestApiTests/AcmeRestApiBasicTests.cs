@@ -337,7 +337,7 @@ namespace Protoacme.IntegrationTests.AcmeRestApiTests
                 {
                     new DnsCertificateIdentifier()
                     {
-                        Value = "vapedish.com"
+                        Value = "test.com"
                     }
                 }
             };
@@ -361,7 +361,7 @@ namespace Protoacme.IntegrationTests.AcmeRestApiTests
                 await Task.Delay(3000);
             }
 
-            string csr = GenerateCSR(accountResponse.Data, "vapedish.com");
+            string csr = GenerateCSR(accountResponse.Data, "test.com");
 
             certificatePromiseResult = await api.FinalizeCertificatePromiseAsync(accountResponse.Data, challengeStatusResponse.Nonce, certificateFulfillmentPromise.Data, csr);
 
@@ -390,7 +390,7 @@ namespace Protoacme.IntegrationTests.AcmeRestApiTests
                 {
                     new DnsCertificateIdentifier()
                     {
-                        Value = "vapedish.com"
+                        Value = "test.com"
                     }
                 }
             };
@@ -414,7 +414,7 @@ namespace Protoacme.IntegrationTests.AcmeRestApiTests
                 await Task.Delay(3000);
             }
 
-            string csr = GenerateCSR(accountResponse.Data, "vapedish.com");
+            string csr = GenerateCSR(accountResponse.Data, "test.com");
 
             certificatePromiseResult = await api.FinalizeCertificatePromiseAsync(accountResponse.Data, challengeStatusResponse.Nonce, certificateFulfillmentPromise.Data, csr);
             certificateResult = await api.GetCertificateAsync(certificatePromiseResult.Data, CertificateType.Cert);

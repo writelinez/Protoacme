@@ -26,7 +26,14 @@ namespace Protoacme.Services
             _nonceCache = nonceCache;
         }
 
-        public async Task<IEnumerable<IAcmeChallengeContent>> GetChallenge(AcmeAccount account, AcmeCertificateFulfillmentPromise acmeCertificateFulfillmentPromise, ChallengeType challengeType)
+        /// <summary>
+        /// Gets challenges used to verify domain ownership.
+        /// </summary>
+        /// <param name="account">Existing account.</param>
+        /// <param name="acmeCertificateFulfillmentPromise">The certificate fulfillment promise retrieved from the RequestCertificate call.</param>
+        /// <param name="challengeType">The challenge type expected back.</param>
+        /// <returns>Challenge used to verify domain ownership</returns>
+        public async Task<IEnumerable<IAcmeChallengeContent>> GetChallengesAsync(AcmeAccount account, AcmeCertificateFulfillmentPromise acmeCertificateFulfillmentPromise, ChallengeType challengeType)
         {
             var response = await _acmeApi.GetChallengesAsync(acmeCertificateFulfillmentPromise);
             var errorResponse = response.Where(t => t.Status == AcmeApiResponseStatus.Error);
@@ -61,6 +68,11 @@ namespace Protoacme.Services
             return challenges;
         }
 
+        /// <summary>
+        /// Tells the Acme server to start the verification process for the challenge
+        /// </summary>
+        /// <param name="challenge">The challenge to start the verification process for</param>
+        /// <returns>The challenge status.</returns>
         public async Task<AcmeChallengeStatus> ExecuteChallengeVerification(IAcmeChallengeContent challenge)
         {
             var nonce = await _nonceCache.GetAsync();
@@ -74,6 +86,12 @@ namespace Protoacme.Services
             return response.Data;
         }
 
+        /// <summary>
+        /// Gets the status of the challenge verification.
+        /// </summary>
+        /// <param name="challenge">The challenge to check verification on</param>
+        /// <returns>The challenge verification status.</returns>
+        /// <remarks>Do not spam this call. Try to space out your calls by 3 seconds at a minimum.</remarks>
         public async Task<AcmeChallengeVerificationStatus> GetChallengeVerificationStatus(IAcmeChallengeContent challenge)
         {
             var response = await _acmeApi.GetChallengeVerificationStatusAsync(challenge.Challenge);

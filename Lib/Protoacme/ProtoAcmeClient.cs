@@ -12,6 +12,9 @@ using System.Threading.Tasks;
 
 namespace Protoacme
 {
+    /// <summary>
+    /// ACME protocol client.
+    /// </summary>
     public class ProtoacmeClient
     {
         private readonly IAcmeRestApi _acmeApi;
@@ -22,8 +25,19 @@ namespace Protoacme
         private readonly AcmeCertificateService _certificateService = null;
         private readonly AcmeChallengeService _challengeService = null;
 
+        /// <summary>
+        /// Handles account related actions.
+        /// </summary>
         public AcmeAccountService Account { get { return _accountService; } }
+
+        /// <summary>
+        /// Certificate actions
+        /// </summary>
         public AcmeCertificateService Certificate { get { return _certificateService; } }
+
+        /// <summary>
+        /// Challenge actions such as certificate verification.
+        /// </summary>
         public AcmeChallengeService Challenge { get { return _challengeService; } }
 
         public ProtoacmeClient(IAcmeRestApi acmeApi)
