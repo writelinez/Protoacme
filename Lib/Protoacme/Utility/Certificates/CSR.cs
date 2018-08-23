@@ -2,14 +2,16 @@
 using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Text;
+using Newtonsoft.Json;
 using Protoacme.Core.Utilities;
+using Protoacme.Models;
 
 namespace Protoacme.Utility.Certificates
 {
-    public class CSR
+    public class CSR : SerializableBase<CSR>
     {
-        private readonly byte[] _bytes;
-        private readonly RSAParameters _rsaParameters;
+        private byte[] _bytes;
+        private RSAParameters _rsaParameters;
 
         public byte[] Bytes
         {
@@ -17,8 +19,13 @@ namespace Protoacme.Utility.Certificates
             {
                 return _bytes;
             }
+            set
+            {
+                _bytes = value;
+            }
         }
 
+        [JsonIgnore]
         public string Base64UrlEncoded
         {
             get
@@ -33,9 +40,15 @@ namespace Protoacme.Utility.Certificates
             {
                 return _rsaParameters;
             }
+            set
+            {
+                _rsaParameters = value;
+            }
         }
 
-        internal CSR(byte[] bytes, RSAParameters rsaParameters)
+        public CSR() { }
+
+        public CSR(byte[] bytes, RSAParameters rsaParameters)
         {
             _bytes = bytes;
             _rsaParameters = rsaParameters;

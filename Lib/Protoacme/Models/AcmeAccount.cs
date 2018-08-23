@@ -6,7 +6,7 @@ using System.Text;
 
 namespace Protoacme.Models
 {
-    public class AcmeAccount
+    public class AcmeAccount : SerializableBase<AcmeAccount>
     {
         public int Id { get; set; }
 

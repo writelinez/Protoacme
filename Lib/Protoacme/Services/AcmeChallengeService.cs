@@ -33,18 +33,23 @@ namespace Protoacme.Services
         /// <param name="acmeCertificateFulfillmentPromise">The certificate fulfillment promise retrieved from the RequestCertificate call.</param>
         /// <param name="challengeType">The challenge type expected back.</param>
         /// <returns>Challenge used to verify domain ownership</returns>
-        public async Task<IEnumerable<IAcmeChallengeContent>> GetChallengesAsync(AcmeAccount account, AcmeCertificateFulfillmentPromise acmeCertificateFulfillmentPromise, ChallengeType challengeType)
+        /// <remarks>If requesting a challenge for a wildcard domain, only dns challenge is supported.</remarks>
+        /// <exception cref="NotSupportedException">If the challenge type is not supported.</exception>
+        /// <exception cref="AcmeProtocolException">On all other Acme related exceptions</exception>
+        public async Task<ChallengeCollection> GetChallengesAsync(AcmeAccount account, AcmeCertificateFulfillmentPromise acmeCertificateFulfillmentPromise, ChallengeType challengeType)
         {
             var response = await _acmeApi.GetChallengesAsync(acmeCertificateFulfillmentPromise);
             var errorResponse = response.Where(t => t.Status == AcmeApiResponseStatus.Error);
             if (errorResponse.Any())
                 throw new AcmeProtocolException(string.Join(" | ", errorResponse.Select(t => t.Message)));
 
-            List<IAcmeChallengeContent> challenges = new List<IAcmeChallengeContent>();
+            ChallengeCollection challenges = new ChallengeCollection();
 
             foreach (var resp in response)
             {
                 AcmeChallenge sChallenge = resp.Data.Challenges.FirstOrDefault(t => t.Type.Equals(challengeType.Value));
+                if (sChallenge == null)
+                    throw new NotSupportedException($"{challengeType.Value} challenge type not supported in this context.");
                 IAcmeChallengeContent challengeContent = null;
                 switch (challengeType.Value)
                 {

@@ -6,7 +6,7 @@ namespace Protoacme.Core
 {
     public class ProtoacmeContants
     {
-        public const string LETSENCRYPT_PROD_ENDPOINT = "https://acme-staging-v02.api.letsencrypt.org/";
+        public const string LETSENCRYPT_PROD_ENDPOINT = "https://acme-v02.api.letsencrypt.org/";
         public const string LETSENCRYPT_STAGING_ENDPOINT = "https://acme-staging-v02.api.letsencrypt.org/";
 
         public const string LETSENCRYPT_DIRECTORY_FRAGMENT = "directory";

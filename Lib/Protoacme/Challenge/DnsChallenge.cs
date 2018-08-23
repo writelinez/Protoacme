@@ -2,6 +2,7 @@
 using Protoacme.Utility.Certificates;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 
 namespace Protoacme.Challenge
@@ -27,7 +28,19 @@ namespace Protoacme.Challenge
 
         public void SaveToFile(string filePath)
         {
-            throw new NotImplementedException("Not implemented on Dns challenge. Requires DNS TXT record change with authorization key.");
+            string fileName = Path.GetFileName(filePath);
+            if (string.IsNullOrEmpty(fileName))
+                throw new FormatException("filePath missing filename.");
+
+            string directory = filePath.Replace(fileName, "");
+            if (!Directory.Exists(directory))
+                throw new DirectoryNotFoundException(directory);
+
+            using (FileStream fs = new FileStream(filePath, FileMode.Create))
+            {
+                byte[] buffer = Encoding.UTF8.GetBytes(AuthorizationKey);
+                fs.Write(buffer, 0, buffer.Length);
+            }
         }
     }
 }

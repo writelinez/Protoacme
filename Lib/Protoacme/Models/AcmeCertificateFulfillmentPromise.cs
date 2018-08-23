@@ -6,7 +6,7 @@ using System.Text;
 
 namespace Protoacme.Models
 {
-    public class AcmeCertificateFulfillmentPromise
+    public class AcmeCertificateFulfillmentPromise : SerializableBase<AcmeCertificateFulfillmentPromise>
     {
         [JsonProperty("status")]
         public string Status { get; set; }

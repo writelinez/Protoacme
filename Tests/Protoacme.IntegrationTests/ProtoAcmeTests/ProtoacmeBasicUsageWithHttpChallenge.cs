@@ -10,6 +10,7 @@ using Protoacme.Utility.Certificates;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -20,9 +21,12 @@ namespace Protoacme.IntegrationTests.ProtoAcmeTests
     {
         private List<string> dnsNames = new List<string>()
         {
-            "test.com",
-            "www.test.com"
+            "domain1.com",
+            "domain2.com",
+            "domain3.net"
         };
+
+        private string wildCardDns = "*.test.com";
 
         [TestMethod]
         public async Task StandardCertificateRequest()
@@ -32,8 +36,7 @@ namespace Protoacme.IntegrationTests.ProtoAcmeTests
 
             //1. Create a new account.
             var newAccountInfo = new AcmeCreateAccount();
-            newAccountInfo.Contact.Add("mailto:bob@gmail.com");
-            newAccountInfo.Contact.Add("mailto:toast@yahoo.com");
+            newAccountInfo.Contact.Add("mailto:bob@taco.net");
             newAccountInfo.TermsOfServiceAgreed = true;
 
             var account = await client.Account.CreateAsync(newAccountInfo);
@@ -86,6 +89,74 @@ namespace Protoacme.IntegrationTests.ProtoAcmeTests
             var cert = await client.Certificate.DownloadCertificateAsync(account, promise, csr, CertificateType.Cert);
 
             //Save Cert
+            using (FileStream fs = new FileStream(@"c:\temp\mycert.cer", FileMode.Create))
+            {
+                byte[] buffer = cert.Array;
+                fs.Write(buffer, 0, buffer.Length);
+            }
+        }
+
+        [TestMethod]
+        public async Task WildCardCertificateRequest()
+        {
+            var restApi = new AcmeRestApi(ProtoacmeContants.LETSENCRYPT_STAGING_ENDPOINT);
+            var client = new ProtoacmeClient(restApi);
+
+            //1. Create a new account.
+            var newAccountInfo = new AcmeCreateAccount();
+            newAccountInfo.Contact.Add("mailto:bob@gmail.com");
+            newAccountInfo.Contact.Add("mailto:toast@yahoo.com");
+            newAccountInfo.TermsOfServiceAgreed = true;
+
+            var account = await client.Account.CreateAsync(newAccountInfo);
+
+            //2. Request the wildcard cert.
+            AcmeCertificateRequest certRequest = new AcmeCertificateRequest();
+            certRequest.Identifiers.Add(new DnsCertificateIdentifier() { Value = wildCardDns });
+            var promise = await client.Certificate.RequestCertificateAsync(account, certRequest);
+
+            //3. Get Challenges
+            var challenge = await client.Challenge.GetChallengesAsync(account, promise, ChallengeType.Dns);
+
+            //4. Save Challenge Information
+            challenge[0].SaveToFile(@"c:\temp\dns_challenge.txt");
+
+            //5. Save account and additional info for future request.
+            account.SaveToFile(@"c:\temp\account.dat");
+            promise.SaveToFile(@"c:\temp\promise.dat");
+            challenge.SaveToFile(@"c:\temp\challenge.dat");
+        }
+
+        [TestMethod]
+        public async Task IssueWildCardCertificate()
+        {
+            var restApi = new AcmeRestApi(ProtoacmeContants.LETSENCRYPT_STAGING_ENDPOINT);
+            var client = new ProtoacmeClient(restApi);
+
+            //1. Load up the account and challenge data.
+            AcmeAccount account = AcmeAccount.FromFile(@"c:\temp\account.dat");
+            AcmeCertificateFulfillmentPromise promise = AcmeCertificateFulfillmentPromise.FromFile(@"c:\temp\promise.dat");
+            ChallengeCollection challenges = ChallengeCollection.FromFile<DnsChallenge>(@"c:\temp\challenge.dat");
+
+            //2. Tell Lets Encrypt to verify our challenge.
+            var startVerifyResult = await client.Challenge.ExecuteChallengeVerification(challenges[0]);
+            AcmeChallengeStatus challengeStatus = null;
+            while (challengeStatus == null || challengeStatus.Status == "pending")
+            {
+                challengeStatus = await client.Challenge.GetChallengeVerificationStatus(challenges[0]);
+                await Task.Delay(3000);
+            }
+            if (challengeStatus.Status != "valid")
+                throw new Exception($"Failed to validate challenge token");
+
+            //3. Create the CSR
+            CSR csr = CertificateUtility.GenerateCsr(wildCardDns);
+            SaveCRTPrivateKey(csr);
+
+            //4. Download the certificate
+            var cert = await client.Certificate.DownloadCertificateAsync(account, promise, csr, CertificateType.Cert);
+
+            //5. Save the certificate
             using (FileStream fs = new FileStream(@"c:\temp\mycert.cer", FileMode.Create))
             {
                 byte[] buffer = cert.Array;
