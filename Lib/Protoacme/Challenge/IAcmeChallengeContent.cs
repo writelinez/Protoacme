@@ -8,6 +8,7 @@ namespace Protoacme.Challenge
         AcmeChallenge Challenge { get; set; }
         string AuthorizationKey { get; set; }
         string Token { get; set; }
+        string Identifier { get; set; }
 
         void SaveToFile(string filePath);
     }

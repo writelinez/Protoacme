@@ -54,15 +54,15 @@ namespace Protoacme.Services
                 switch (challengeType.Value)
                 {
                     case ProtoacmeContants.CHALLENGE_HTTP:
-                        challengeContent = new HttpChallenge(account, sChallenge);
+                        challengeContent = new HttpChallenge(account, sChallenge, resp.Data.Identifier?.Value);
                         challenges.Add(challengeContent);
                         break;
                     case ProtoacmeContants.CHALLENGE_DNS:
-                        challengeContent = new DnsChallenge(account, sChallenge);
+                        challengeContent = new DnsChallenge(account, sChallenge, resp.Data.Identifier?.Value);
                         challenges.Add(challengeContent);
                         break;
                     case ProtoacmeContants.CHALLENGE_TLS:
-                        challengeContent = new TlsChallenge(account, sChallenge);
+                        challengeContent = new TlsChallenge(account, sChallenge, resp.Data.Identifier?.Value);
                         challenges.Add(challengeContent);
                         break;
                     default:

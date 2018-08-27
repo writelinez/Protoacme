@@ -17,14 +17,19 @@ namespace Protoacme.Challenge
 
         public string Token { get; set; }
 
-        public HttpChallenge(AcmeAccount account, AcmeChallenge challenge)
+        public string Identifier { get; set; }
+
+        public HttpChallenge(AcmeAccount account, AcmeChallenge challenge, string identifier)
         {
             Account = account;
             Challenge = challenge;
+            Identifier = identifier;
 
             Token = challenge.Token;
             AuthorizationKey = CertificateUtility.CreateAuthorizationKey(account, challenge.Token);
         }
+
+        public HttpChallenge() { }
 
         public void SaveToFile(string filePath)
         {
