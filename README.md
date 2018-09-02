@@ -71,32 +71,52 @@ AcmeCertificateFulfillmentPromise promise = await _protoacmeClient.Certificate.R
 ChallengeCollection challenges = await _protoacmeClient.Challenge.GetChallengesAsync(acmeAccount, promise, ChallengeType.Http);
 ```
 
-## Built With
+### Setup your challenge
+Depending on the challenge type you chose, you will need to setup your challenge so Lets Encrypt can verify that you own the domain name.
+* Http Challenge
+    * Place a file in your web server with the authorization key contents from the challenges response. The file should be located at .well-known/acme-challenge/{token from challenge response}
 
-* [Dropwizard](http://www.dropwizard.io/1.0.2/docs/) - The web framework used
-* [Maven](https://maven.apache.org/) - Dependency Management
-* [ROME](https://rometools.github.io/rome/) - Used to generate RSS Feeds
+Currently, only http challenges are working. DNS and TLS Challenges coming soon.
 
-## Contributing
+### Verify your challenge with Lets Encrypt
+``` csharp
+foreach (var challenge in challenges)
+{
+    var startVerifyResult = await client.Challenge.ExecuteChallengeVerification(challenge);
+    AcmeChallengeStatus challengeStatus = null;
+    while (challengeStatus == null || challengeStatus.Status == "pending")
+    {
+        challengeStatus = await client.Challenge.GetChallengeVerificationStatus(challenge);
+        //We need to wait at least 3 seconds before checking the status again.
+        await Task.Delay(3000);
+    }
 
-Please read [CONTRIBUTING.md](https://gist.github.com/PurpleBooth/b24679402957c63ec426) for details on our code of conduct, and the process for submitting pull requests to us.
+    if (challengeStatus.Status != "valid")
+    throw new Exception($"Failed to validate challenge token {challenge.Token}");
+}
+```
 
-## Versioning
+### Download your certificate
+``` csharp
+var cert = await client.Certificate.DownloadCertificateAsync(account, promise, csr, CertificateType.Cert);
 
-We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/your/project/tags). 
+//Save Certificate to file
+using (FileStream fs = new FileStream(@"c:\temp\mycert.cer", FileMode.Create))
+{
+    byte[] buffer = cert.Array;
+    fs.Write(buffer, 0, buffer.Length);
+}
+```
 
 ## Authors
 
-* **Billie Thompson** - *Initial work* - [PurpleBooth](https://github.com/PurpleBooth)
-
-See also the list of [contributors](https://github.com/your/project/contributors) who participated in this project.
+* **Chris Bardsley** - *Via Writelines* - [WriteLinez](https://github.com/writelinez)
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
+This project is licensed under the MIT License
 
 ## Acknowledgments
 
-* Hat tip to anyone whose code was used
-* Inspiration
-* etc
+* To the Lets Encrypt Team!  Support Lets Encrypt if you can so they can continue to provide free SSL certificates to the world!
+* [Lets Encrypt](https://letsencrypt.org/)
