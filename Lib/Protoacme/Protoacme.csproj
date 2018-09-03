@@ -3,6 +3,13 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp2.1</TargetFramework>
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
+    <Description>Protoacme is a .NET Core 2.1 ACME client that leverages the ACME protocol from Lets Encrypt to issue and renew SSL certificates. This Api leverages the v2 endpoints from Lets Encrypt. Currently wildcard certificates are supported by the Lets Encrypt v2 endpoint but are not currently working through this Api. (should be working soon.)</Description>
+    <Copyright>2018 WriteLinez</Copyright>
+    <PackageLicenseUrl>https://raw.githubusercontent.com/writelinez/Protoacme/master/LICENSE</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/writelinez/Protoacme</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/writelinez/Protoacme</RepositoryUrl>
+    <RepositoryType>Github</RepositoryType>
+    <PackageTags>protoacme acme lets encrypt ssl https secure api</PackageTags>
   </PropertyGroup>
 
   <ItemGroup>
