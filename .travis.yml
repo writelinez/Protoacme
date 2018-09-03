@@ -3,6 +3,11 @@ mono: none
 dotnet: 2.1.101
 dist: trusty
 sudo: "required"
+addons:
+  apt:
+    packages:
+    - dotnet-sharedframework-microsoft.netcore.app-1.1.2
+    - libzmq3-dev
 before_install:
   - sudo apt-get update
 install:
