@@ -119,14 +119,17 @@ namespace Protoacme.Core
 
             Dictionary<string, object> oResp = JsonConvert.DeserializeObject<Dictionary<string, object>>(apiRespString);
 
+            var loc = locations.FirstOrDefault();
+            var id = int.Parse((new Uri(loc)).Segments.Last());
+
             return new AcmeApiResponse<AcmeAccount>()
             {
                 Status = AcmeApiResponseStatus.Success,
                 Nonce = nonces.FirstOrDefault(),
                 Data = new AcmeAccount()
                 {
-                    Id = Convert.ToInt32(oResp["id"]),
-                    KID = locations.FirstOrDefault(),
+                    Id = id,
+                    KID = loc,
                     SecurityInfo = rsaPrams,
                     Contact = account.Contact
                 }
